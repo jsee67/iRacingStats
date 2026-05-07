@@ -1,4 +1,4 @@
-<html lang="de"><head>
+<html lang="es"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>iRacing Career Tracker</title>
@@ -263,8 +263,79 @@ input:focus, select:focus, textarea:focus {
 @media (max-width: 1340px) { #cat-fixed-sidebar { display: none !important; } }
 
 /* ── Mobile ──────────────────────────────────────────────── */
-@media (max-width: 600px) {
-  .modal { padding: 20px; border-radius: 12px; }
+@media (max-width: 768px) {
+  body { font-size: 13px; }
+
+  .card { padding: 12px 14px; border-radius: 10px; }
+
+  .modal-bg { padding: 8px; align-items: flex-end; }
+  .modal {
+    padding: 18px 16px;
+    border-radius: 16px 16px 0 0;
+    max-height: 88vh;
+    max-width: 100%;
+  }
+
+  .tab-btn {
+    height: 48px;
+    padding: 0 10px;
+    font-size: 11px;
+    gap: 1px;
+  }
+
+  .btn { padding: 9px 14px; font-size: 12px; }
+  .btn-outline { padding: 6px 10px; font-size: 11px; }
+
+  input, select, textarea { padding: 9px 12px; font-size: 13px; }
+
+  .race-card { gap: 10px; flex-wrap: wrap; }
+
+  /* Force 3-col grids to stack */
+  [style*="gridTemplateColumns: 1fr 1fr 1fr"],
+  [style*="gridTemplateColumns:1fr 1fr 1fr"],
+  [style*="grid-template-columns: 1fr 1fr 1fr"],
+  [style*="grid-template-columns:1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+  [style*="gridTemplateColumns: repeat(3"],
+  [style*="gridTemplateColumns:repeat(3"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Opponents top panel — stack columns */
+  [style*="gridTemplateColumns: 1fr 1fr 1fr"][style*="gap: 12px"] {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Smaller mono text on mobile */
+  .mono { font-size: 0.95em; }
+
+  /* Fix wide SVG charts */
+  svg { max-width: 100%; height: auto; }
+}
+
+@media (max-width: 480px) {
+  body { font-size: 12px; -webkit-text-size-adjust: 100%; }
+
+  .tab-btn {
+    height: 44px;
+    padding: 0 7px;
+    font-size: 10px;
+  }
+  .tab-btn > span:last-child { display: none; } /* hide subtitles */
+
+  .modal { padding: 14px 12px; }
+
+  .card { padding: 10px 12px; }
+
+  .btn { padding: 8px 12px; font-size: 11px; border-radius: 6px; }
+  .btn-outline { padding: 5px 8px; font-size: 10px; border-radius: 6px; }
+
+  /* Stack even 2-col grids */
+  [style*="gridTemplateColumns: 1fr 1fr"],
+  [style*="gridTemplateColumns:1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 </style>
@@ -834,7 +905,7 @@ const TRANSLATIONS = {
 
 // ── Language state ──
 function getLang() {
-  return loadLS(LANG_KEY, 'de');
+  return loadLS(LANG_KEY, 'es');
 }
 function setLang(lang) {
   saveLS(LANG_KEY, lang);
@@ -846,14 +917,13 @@ function t(key) {
   const lang = state.lang || getLang();
   const entry = TRANSLATIONS[key];
   if (!entry) return key;
-  return entry[lang] || entry['en'] || entry['de'] || key;
+  return entry[lang] || entry['es'] || entry['en'] || key;
 }
 
 // ── Language buttons (DE / EN only) ──
 const LANGUAGES = [
-  { code: 'de', label: 'DE', full: 'Deutsch' },
-  { code: 'en', label: 'EN', full: 'English' },
   { code: 'es', label: 'ES', full: 'Español' },
+  { code: 'en', label: 'EN', full: 'English' },
 ];
 
 function renderLangButtons() {
@@ -948,7 +1018,7 @@ function init(){
   if(r === null) state.races = [...SEED_RACES];
   else state.races = r;
   state.flagged = f || [...SEED_FLAGGED];
-  state.lang = loadLS('iracing-v3-lang', 'de');
+  state.lang = loadLS('iracing-v3-lang', 'es');
   render();
 }
 
@@ -1638,14 +1708,14 @@ function renderRaces(){
       }},
         div({style:{display:'flex',alignItems:'center',gap:'8px',color:'#e3b341'}},
           span({},'⚠️'),
-          span({},state.lang==='de'
-            ? `Demo-Daten aktiv (${demoRaces.length} Rennen) — deine echten Rennen sind bereits importiert.`
+          span({},state.lang==='es'
+            ? `Datos demo activos (${demoRaces.length} carreras) — tus carreras reales ya están importadas.`
             : `Demo data active (${demoRaces.length} races) — your real races are already imported.`)
         ),
         btn({class:'btn', style:{background:'#e3b341', color:'#000', fontSize:'12px', padding:'6px 14px', borderRadius:'8px', fontWeight:'700', flexShrink:'0'},
           onClick:()=>{
-            const msg = state.lang==='de'
-              ? `${demoRaces.length} Demo-Rennen entfernen? Deine ${realRaces.length} echten Rennen bleiben erhalten.`
+            const msg = state.lang==='es'
+              ? `¿Eliminar ${demoRaces.length} carreras demo? Tus ${realRaces.length} carreras reales se conservarán.`
               : `Remove ${demoRaces.length} demo races? Your ${realRaces.length} real races will be kept.`;
             if(confirm(msg)){
               updateRaces(realRaces);
@@ -1658,7 +1728,7 @@ function renderRaces(){
               render();
             }
           }
-        }, state.lang==='de' ? '🗑 Demo-Daten entfernen' : '🗑 Remove demo data')
+        }, t('remove_demo'))
       )
     : null;
 
@@ -2496,14 +2566,14 @@ function renderRaceFormModal(race){
     mkField(t('position'),'pos','number','7'),
     mkField('Start '+t('position'),'startPos','number','18'),
     mkField(t('incidents'),'inc','number','0'),
-    mkField('iRating '+state.lang==='de'?'vorher':'before','iRatingBefore','number','1750'),
-    mkField('iRating '+state.lang==='de'?'nachher':'after','iRatingAfter','number','1810'),
-    mkField('SR '+(state.lang==='de'?'vorher':'before')+' (opt.)','srBefore','number','3.55'),
-    mkField('SR '+(state.lang==='de'?'nachher':'after')+' (opt.)','srAfter','number','3.71'),
+    mkField('iRating '+t('ir_before'),'iRatingBefore','number','1750'),
+    mkField('iRating '+t('ir_after'),'iRatingAfter','number','1810'),
+    mkField('SR '+t('ir_before')+' (opt.)','srBefore','number','3.55'),
+    mkField('SR '+t('ir_after')+' (opt.)','srAfter','number','3.71'),
     mkField('Fastest Lap (opt.)','fastestLap','text','1:35.123'),
     mkField('Average Lap (opt.)','averageLap','text','1:38.456'),
     div({style:{gridColumn:'1/-1'}},h('label',{class:'lbl'},t('notes')),notesTA),
-    div({style:{gridColumn:'1/-1'}},h('label',{class:'lbl'},state.lang==='de'?'Vorzeitig beendet?':'Retired?'),dnfBtns)
+    div({style:{gridColumn:'1/-1'}},h('label',{class:'lbl'},t('retired_q')),dnfBtns)
   );
 
   return modalWrap(div({},
@@ -2512,7 +2582,7 @@ function renderRaceFormModal(race){
     div({style:{display:'flex',gap:'10px',marginTop:'20px',justifyContent:'space-between'}},
       div({style:{display:'flex',gap:'10px'}},
         btn({class:'btn',style:{background:'#238636',borderRadius:'8px'},onClick:()=>{
-          if(!form.track||!form.pos||!form.iRatingBefore||!form.iRatingAfter){alert(state.lang==='de'?'Bitte Strecke, Position und iRating ausfüllen.':'Please fill in track, position and iRating.');return;}
+          if(!form.track||!form.pos||!form.iRatingBefore||!form.iRatingAfter){alert(t('fill_required'));return;}
           editRace({...form,id:race?.id||'r'+Date.now(),pos:+form.pos,startPos:+(form.startPos||0),inc:+(form.inc||0),sof:+(form.sof||0),iRatingBefore:+form.iRatingBefore,iRatingAfter:+form.iRatingAfter,srBefore:form.srBefore?+form.srBefore:null,srAfter:form.srAfter?+form.srAfter:null});
           closeModal();
         }},t('race_form_save')),
@@ -2583,7 +2653,7 @@ function renderCSVPreviewModal(preview){
   const warnBanner=autoWetDetected?div({style:{background:'#e3b34115',border:'1px solid #e3b34155',borderRadius:'8px',padding:'10px 14px',marginBottom:'12px',fontSize:'12px',color:'#e3b341',display:'flex',gap:'8px',alignItems:'flex-start'}},
     span({style:{fontSize:'16px',flexShrink:'0'}},'⚠️'),
     div({},
-      div({style:{fontWeight:'700',marginBottom:'2px'}},state.lang==='de'?'Ungewöhnlich langsame Zeit erkannt':'Unusually slow lap time detected'),
+      div({style:{fontWeight:'700',marginBottom:'2px'}},t('slow_lap')),
       div({style:{color:'#8b949e'}},'FL '+preview.fastestLap+' — '+slowPct.toFixed(1)+'% slower than your best on this track. Was it wet?')
     )
   ):null;
@@ -2602,14 +2672,14 @@ function renderCSVPreviewModal(preview){
       wetChk,
       div({},
         div({style:{fontSize:'13px',fontWeight:'700',color:'#c9d1d9'}},'💧 '+t('wet_race_label')),
-        div({style:{fontSize:'11px',color:'#8b949e',marginTop:'2px'}},state.lang==='de'?'Zeiten werden aus FL-Gap-Analyse ausgeschlossen':'Times excluded from FL-gap analysis')
+        div({style:{fontSize:'11px',color:'#8b949e',marginTop:'2px'}},t('excluded_fl'))
       )
     ),
     h('label',{style:{display:'flex',alignItems:'center',gap:'10px',padding:'10px 14px',background:'#f0883e0d',border:'1px solid #f0883e33',borderRadius:'8px',cursor:'pointer',marginBottom:'20px',userSelect:'none'}},
       extChk,
       div({},
         div({style:{fontSize:'13px',fontWeight:'700',color:'#c9d1d9'}},'⚡ '+t('dnf_external')),
-        div({style:{fontSize:'11px',color:'#8b949e',marginTop:'2px'}},state.lang==='de'?'Incidents durch Fremdeinwirkung':'Incidents caused by others')
+        div({style:{fontSize:'11px',color:'#8b949e',marginTop:'2px'}},t('ext_incidents'))
       )
     ),
     div({style:{display:'flex',gap:'10px'}},
@@ -2626,22 +2696,22 @@ function renderJSONDuplicateModal(preview,allResults){
     div({style:{fontSize:'18px',fontWeight:'900',color:'#c9d1d9',marginBottom:'8px'}},preview.track),
     div({style:{fontSize:'13px',color:'#8b949e',marginBottom:'20px'}},(preview.date||'').slice(0,16)+' · SoF '+preview.sof),
     div({style:{background:'#e3b34115',border:'1px solid #e3b34144',borderRadius:'10px',padding:'14px 16px',marginBottom:'20px',fontSize:'13px',lineHeight:'1.8'}},
-      div({style:{color:'#e3b341',fontWeight:'900',marginBottom:'6px'}},state.lang==='de'?'Race-ID bereits in der Datenbank:':'Race ID already in database:'),
+      div({style:{color:'#e3b341',fontWeight:'900',marginBottom:'6px'}},t('dup_title')),
       div({style:{color:'#8b949e',fontFamily:"'Courier New',monospace",fontSize:'12px',marginBottom:'10px'}},preview.id),
-      div({style:{color:'#c9d1d9'}},state.lang==='de'?'Möchtest du das Rennen überschreiben?':'Overwrite this race?'),
-      div({style:{color:'#8b949e',fontSize:'12px',marginTop:'4px'}},state.lang==='de'?'→ Gegner werden ebenfalls neu eingelesen.':'→ Opponents will also be re-imported.')
+      div({style:{color:'#c9d1d9'}},t('dup_overwrite')),
+      div({style:{color:'#8b949e',fontSize:'12px',marginTop:'4px'}},t('dup_hint'))
     ),
     div({style:{display:'flex',gap:'10px',flexWrap:'wrap'}},
       btn({class:'btn',style:{background:'#9e6a03',borderRadius:'8px'},onClick:()=>{
         updateRaces(state.races.filter(r=>r.id!==preview.id));
         mergeOpponentsFromJSON(preview.id,preview.date,preview.track,preview.category,preview.sof,allResults);
         openCSVPreview(preview);
-      }},'⚠️ '+(state.lang==='de'?'Überschreiben':'Overwrite')),
+      }},'⚠️ '+(t('dup_overwrite_btn'))),
       btn({class:'btn',style:{background:'#1f6feb',borderRadius:'8px'},onClick:()=>{
         mergeOpponentsFromJSON(preview.id,preview.date,preview.track,preview.category,preview.sof,allResults);
         closeModal();
         alert('✅ '+t('import_success'));
-      }},'👥 '+(state.lang==='de'?'Nur Gegner':'Opponents only')),
+      }},'👥 '+(t('dup_opp_only'))),
       btn({class:'btn-outline',style:{borderRadius:'8px'},onClick:closeModal},t('cancel'))
     )
   ));
@@ -3078,7 +3148,7 @@ function renderZeitanalyse(){
   }
 
   // Wochentag breakdown (Mo-So)
-  const dayNames = state.lang === 'de' ? ['So','Mo','Di','Mi','Do','Fr','Sa'] : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const dayNames = state.lang === 'es' ? ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'] : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const dayData=Array.from({length:7},(_,i)=>{
     const dr=races.filter(r=>new Date(r.date).getDay()===i);
     return {day:dayNames[i],s:stats(dr),isWE:i===0||i===6};
@@ -3569,7 +3639,7 @@ function renderStatistiken(){
           return div({style:{background:'#161b22',borderRadius:'8px',padding:'8px 14px',display:'flex',flexDirection:'column',gap:'2px'}},
             div({style:{fontSize:'11px',color:'#8b949e',letterSpacing:'1px',fontWeight:'700'}},'🎯 '+m+' iR'),
             div({style:{fontSize:'15px',fontWeight:'900',color:color,fontFamily:'monospace'}},'~'+racesNeeded+' '+t('races')),
-            div({style:{fontSize:'11px',color:'#8b949e'}},t('at_avg')+' +'+slope.toFixed(1)+' iR/'+(state.lang==='de'?'Rennen':'Race'))
+            div({style:{fontSize:'11px',color:'#8b949e'}},t('at_avg')+' +'+slope.toFixed(1)+' iR/'+(t('race')))
           );
         })
       ) : div({style:{fontSize:'12px',color:'#f85149',marginTop:'8px'}},slope<=0?t('neg_trend'):'');
@@ -3584,7 +3654,7 @@ function renderStatistiken(){
       return div({class:'card',style:{borderColor:color+'44'}},
         div({style:{fontSize:'14px',fontWeight:'700',color:'#c9d1d9',marginBottom:'4px'}},(color==='#58a6ff'?'🔵 Formula':'🟢 Road')+' '+t('irating_prognose')),
         div({style:{display:'flex',gap:'16px',flexWrap:'wrap',marginBottom:'12px'}},
-          div({},div({style:{fontSize:'11px',color:'#8b949e'}},state.lang==='de'?'Aktuell':'Current'),div({class:'mono',style:{fontSize:'22px',color}},(curIR||'–').toString())),
+          div({},div({style:{fontSize:'11px',color:'#8b949e'}},t('ir_current')),div({class:'mono',style:{fontSize:'22px',color}},(curIR||'–').toString())),
           div({},div({style:{fontSize:'11px',color:'#8b949e'}},t('ir_trend')),div({class:'mono',style:{fontSize:'22px',color:slope>=0?'#3fb950':'#f85149'}},(slope>=0?'+':'')+slope.toFixed(1))),
           div({},div({style:{fontSize:'11px',color:'#8b949e'}},t('last10_avg')),div({class:'mono',style:{fontSize:'22px',color:color}},Math.round(ys.slice(-10).reduce((a,b)=>a+b,0)/Math.min(10,ys.length)).toString()))
         ),
@@ -3653,7 +3723,7 @@ function renderStatistiken(){
     const fRaces=[...races.filter(r=>r.category==='formula')].sort((a,b)=>a.date.localeCompare(b.date));
     const rRaces=[...races.filter(r=>r.category==='road')].sort((a,b)=>a.date.localeCompare(b.date));
 
-    const twOptions=[['5',state.lang==='de'?'Letzte 5':'Last 5'],['10',state.lang==='de'?'Letzte 10':'Last 10'],['20',state.lang==='de'?'Letzte 20':'Last 20'],['all',t('all_compact')]];
+    const twOptions=[['5',t('last_n')+'5'],['10',t('last_n')+'10'],['20',t('last_n')+'20'],['all',t('all_compact')]];
     const trendSelector=div({style:{display:'flex',gap:'6px',alignItems:'center',flexWrap:'wrap',padding:'10px 14px',background:'#161b22',borderRadius:'10px'}},
       span({style:{fontSize:'11px',color:'#8b949e',fontWeight:'700',letterSpacing:'1px',marginRight:'4px'}},t('trend_window')),
       ...twOptions.map(([v,l])=>btn({class:'btn-outline',
@@ -3741,7 +3811,7 @@ function renderStatistiken(){
                   delta?div({style:{fontSize:'11px',color:'#8b949e'}},'Δ '+delta+'s'):null
                 ),
                 div({style:{display:'flex',alignItems:'center',gap:'10px'}},
-                  div({style:{fontSize:'11px',color:'#8b949e'}},c.allLaps.length+' '+(state.lang==='de'?'Runde'+(c.allLaps.length!==1?'n':''):'lap'+(c.allLaps.length!==1?'s':''))),
+                  div({style:{fontSize:'11px',color:'#8b949e'}},c.allLaps.length+' '+(state.lang==='es'?'vuelta'+(c.allLaps.length!==1?'s':''):'lap'+(c.allLaps.length!==1?'s':''))),
                   div({style:{color:'#484f58',fontSize:'12px',transition:'transform .15s',transform:cExp?'rotate(180deg)':'rotate(0)'}},'▼')
                 )
               ),
@@ -3774,8 +3844,8 @@ function renderStatistiken(){
             div({style:{display:'flex',flexDirection:'column',gap:'3px'}},
               div({style:{fontSize:'14px',fontWeight:'700',color:'#c9d1d9'}},'🏁 '+tk.track),
               div({style:{display:'flex',gap:'12px',fontSize:'12px',color:'#8b949e',flexWrap:'wrap',marginTop:'2px'}},
-                bestLapStr?span({},span({style:{color:'#e3b341',fontWeight:'700',fontFamily:'monospace'}},bestLapStr),state.lang==='de'?' Bestzeit':' Best lap'):null,
-                span({},tk.carCount+' '+(state.lang==='de'?'Auto'+(tk.carCount!==1?'s':''):'car'+(tk.carCount!==1?'s':'')))
+                bestLapStr?span({},span({style:{color:'#e3b341',fontWeight:'700',fontFamily:'monospace'}},bestLapStr),state.lang==='es'?' Mejor vuelta':' Best lap'):null,
+                span({},tk.carCount+' '+(state.lang==='es'?'auto'+(tk.carCount!==1?'s':''):'car'+(tk.carCount!==1?'s':'')))
               )
             ),
             div({style:{color:'#484f58',fontSize:'14px',transition:'transform .15s',transform:tExp?'rotate(180deg)':'rotate(0)'}},'▼')
@@ -3873,7 +3943,7 @@ function renderStatistiken(){
                 const op=0.5+ratio*0.5;
                 const fw=ratio>0.5?'900':'700';
                   return span({
-                    title:t+' ('+c+' '+state.lang==='de'?'Rennen':'races'+')',
+                    title:t+' ('+c+' '+state.lang==='es'?'carreras':'races'+')',
                     style:{fontSize:fs+'px',fontWeight:fw,color:color,opacity:op,cursor:'default',fontFamily:"'Courier New',monospace"}
                   },shortT(t)+(c>1?' ×'+c:''));
                 })()];
@@ -3905,8 +3975,8 @@ function renderStatistiken(){
 
     sectionContent = div({style:{display:'flex',flexDirection:'column',gap:'12px'}},
       div({style:{background:'#161b22',borderRadius:'8px',padding:'10px 14px',fontSize:'12px',color:'#8b949e',display:'flex',gap:'16px',flexWrap:'wrap'}},
-        span({},span({style:{color:'#e06c75',fontWeight:'700'}},'🏙️ Street Circuits: '),streetR.length+' '+(state.lang==='de'?'Rennen auf':'races on')+' '+streetTracks.length+' '+(state.lang==='de'?'Strecken':'tracks')),
-        span({},span({style:{color:'#61afef',fontWeight:'700'}},'🏁 Permanent Tracks: '),permR.length+' '+(state.lang==='de'?'Rennen auf':'races on')+' '+permCount+' '+(state.lang==='de'?'Strecken':'tracks'))
+        span({},span({style:{color:'#e06c75',fontWeight:'700'}},'🏙️ Street Circuits: '),streetR.length+' '+(state.lang==='es'?'carreras en':'races on')+' '+streetTracks.length+' '+(state.lang==='es'?'pistas':'tracks')),
+        span({},span({style:{color:'#61afef',fontWeight:'700'}},'🏁 Permanent Tracks: '),permR.length+' '+(state.lang==='es'?'carreras en':'races on')+' '+permCount+' '+(state.lang==='es'?'pistas':'tracks'))
       ),
       (sS&&pS)?div({class:'card'},
         div({style:{fontSize:'13px',color:'#c9d1d9',fontWeight:'700',marginBottom:'12px',letterSpacing:'1px'}},t('direct_compare')),
@@ -4000,7 +4070,7 @@ function renderStatistiken(){
             if(slope<-0.3){trendColor='#3fb950';trendLabel=t('learning_active');}
             else if(slope<0.1){trendColor='#e3b341';trendLabel=t('plateau');}
             else{trendColor='#f85149';trendLabel=t('regression');}
-            summaryLine=state.lang==='de'?(imp>0?'Bestzeit von '+lapWeeks[0].bestLapStr+' auf '+lapWeeks[lapWeeks.length-1].bestLapStr+' ('+Math.abs(imp).toFixed(3)+'s schneller)':'Bestzeit von '+lapWeeks[0].bestLapStr+' auf '+lapWeeks[lapWeeks.length-1].bestLapStr+' (+'+Math.abs(imp).toFixed(3)+'s langsamer)'):(imp>0?'Best lap improved from '+lapWeeks[0].bestLapStr+' to '+lapWeeks[lapWeeks.length-1].bestLapStr+' ('+Math.abs(imp).toFixed(3)+'s faster)':'Best lap from '+lapWeeks[0].bestLapStr+' to '+lapWeeks[lapWeeks.length-1].bestLapStr+' ('+Math.abs(imp).toFixed(3)+'s slower)');
+            summaryLine=state.lang==='es'?(imp>0?'Mejor vuelta mejoró de '+lapWeeks[0].bestLapStr+' a '+lapWeeks[lapWeeks.length-1].bestLapStr+' ('+Math.abs(imp).toFixed(3)+'s más rápido)':'Mejor vuelta de '+lapWeeks[0].bestLapStr+' a '+lapWeeks[lapWeeks.length-1].bestLapStr+' (+'+Math.abs(imp).toFixed(3)+'s más lento)'):(imp>0?'Best lap improved from '+lapWeeks[0].bestLapStr+' to '+lapWeeks[lapWeeks.length-1].bestLapStr+' ('+Math.abs(imp).toFixed(3)+'s faster)':'Best lap from '+lapWeeks[0].bestLapStr+' to '+lapWeeks[lapWeeks.length-1].bestLapStr+' ('+Math.abs(imp).toFixed(3)+'s slower)');
           } else {
             // SoF-adjusted
             const sofW=w.filter(x=>x.avgSof>0);
@@ -4044,7 +4114,7 @@ function renderStatistiken(){
             div({style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:'10px'}},
               div({},
                 div({style:{fontSize:'14px',fontWeight:'700',color:'#c9d1d9'}},tk.track),
-                div({style:{fontSize:'11px',color:'#8b949e',marginTop:'2px'}},tk.car+' · '+w.length+(state.lang==='de'?' Wochen · ':' weeks · ')+w.reduce((s,x)=>s+x.count,0)+' '+t('races'))
+                div({style:{fontSize:'11px',color:'#8b949e',marginTop:'2px'}},tk.car+' · '+w.length+(state.lang==='es'?' semanas · ':' weeks · ')+w.reduce((s,x)=>s+x.count,0)+' '+t('races'))
               ),
               div({style:{textAlign:'right'}},
                 div({style:{fontSize:'12px',fontWeight:'700',color:trendColor}},trendLabel),
@@ -4254,7 +4324,7 @@ function renderStatistiken(){
             var tn=(r.track||'').split(' - ')[0].split(' \u2013 ')[0];
             if(trackList.indexOf(tn)===-1) trackList.push(tn);
           });
-          var wTrackLabel = trackList.length===1?trackList[0]:trackList.length+' '+(state.lang==='de'?'Strecken':'tracks');
+          var wTrackLabel = trackList.length===1?trackList[0]:trackList.length+' '+(state.lang==='es'?'pistas':'tracks');
 
           // week review: vs average
           var vsAvg = wIR - weekAvgIR;
@@ -4375,13 +4445,13 @@ function renderStatistiken(){
           // stats
           div({style:{display:'flex',gap:'6px',marginBottom:'10px'}},
             div({style:{flex:'1',background:'#0d1117',borderRadius:'8px',padding:'8px',textAlign:'center'}},div({style:{fontSize:'18px',color:'#ffd700',fontWeight:'900',fontFamily:"'Courier New',monospace"}},wins),div({style:{fontSize:'10px',color:'#484f58'}},t('wins'))),
-            div({style:{flex:'1',background:'#0d1117',borderRadius:'8px',padding:'8px',textAlign:'center'}},div({style:{fontSize:'18px',color:'#c0c0c0',fontWeight:'900',fontFamily:"'Courier New',monospace"}},podiums),div({style:{fontSize:'10px',color:'#484f58'}},state.lang==='de'?'Podien':'Podiums')),
+            div({style:{flex:'1',background:'#0d1117',borderRadius:'8px',padding:'8px',textAlign:'center'}},div({style:{fontSize:'18px',color:'#c0c0c0',fontWeight:'900',fontFamily:"'Courier New',monospace"}},podiums),div({style:{fontSize:'10px',color:'#484f58'}},t('podiums'))),
             div({style:{flex:'1',background:'#0d1117',borderRadius:'8px',padding:'8px',textAlign:'center'}},div({style:{fontSize:'18px',color:'#3fb950',fontWeight:'900',fontFamily:"'Courier New',monospace"}},Math.round(cleanN/rs.length*100)+'%'),div({style:{fontSize:'10px',color:'#484f58'}},'Sauber')),
             div({style:{flex:'1',background:'#0d1117',borderRadius:'8px',padding:'8px',textAlign:'center'}},div({style:{fontSize:'18px',color:'#e3b341',fontWeight:'900',fontFamily:"'Courier New',monospace"}},avgInc+'x'),div({style:{fontSize:'10px',color:'#484f58'}},'Inc Ø'))
           ),
           // week rows
           weeks.length>0 ? div({},
-            div({style:{fontSize:'10px',color:'#484f58',fontWeight:'700',letterSpacing:'1px',marginBottom:'6px'}},state.lang==='de'?'WOCHEN — klicken zum aufklappen':'WEEKS — click to expand'),
+            div({style:{fontSize:'10px',color:'#484f58',fontWeight:'700',letterSpacing:'1px',marginBottom:'6px'}},state.lang==='es'?'SEMANAS — clic para expandir':'WEEKS — click to expand'),
             div({},...weekRows)
           ) : null
         );
@@ -4392,7 +4462,7 @@ function renderStatistiken(){
         div({},span({style:{color:'#8b949e',fontSize:'12px'}},t('total_label')+' '),span({style:{color:'#c9d1d9',fontWeight:'700',fontFamily:"'Courier New',monospace"}},seasonRaces.length+' '+t('races'))),
         div({},span({style:{color:'#8b949e',fontSize:'12px'}},'iR-Bilanz '),span({style:{color:allIR>=0?'#3fb950':'#f85149',fontWeight:'900',fontFamily:"'Courier New',monospace",fontSize:'15px'}},fmtD(allIR))),
         div({},span({style:{color:'#8b949e',fontSize:'12px'}},'Seasons '),span({style:{color:'#c9d1d9',fontWeight:'700'}},seasonKeys.length.toString())),
-        noSeasonCount>0?div({},span({style:{color:'#e3b341',fontSize:'11px'}},'⚠️ '+noSeasonCount+state.lang==='de'?' ohne Season-Info':' without season data')):null
+        noSeasonCount>0?div({},span({style:{color:'#e3b341',fontSize:'11px'}},'⚠️ '+noSeasonCount+state.lang==='es'?' sin datos de temporada':' without season data')):null
       );
       sectionContent = div({}, summaryBar, compCard, ...seasonCards);
     }
@@ -4445,9 +4515,9 @@ function render(){
     ['stats',       '📈 '+t('tab_stats'),       t('tab_stats_sub')],
     ['races',       '🏎️ '+t('tab_races'),       (races.length||0)+' '+t('races')],
     ['opponents',   '🌐 '+t('tab_opponents'),    oppCount+' '+t('encounters')],
-    ['zeitanalyse', '📊 '+t('tab_zeit'),         state.lang==='de'?'Wann bin ich gut?':'When am I fast?'],
-    ['statistiken', '📊 '+t('tab_statistiken'),  state.lang==='de'?'Tiefenanalyse':'Deep dive'],
-    ['docs',        '📖 '+t('tab_docs'),         state.lang==='de'?'Hilfe & Infos':'Help & Info'],
+    ['zeitanalyse', '📊 '+t('tab_zeit'),         t('zeit_subtitle')],
+    ['statistiken', '📊 '+t('tab_statistiken'),  t('tab_stats_sub')],
+    ['docs',        '📖 '+t('tab_docs'),         t('docs_title')],
     ['config',      '⚙️ '+t('tab_config'),       t('tab_config_sub')],
   ];
 
@@ -4599,10 +4669,8 @@ function renderConfig(){
       div({style:{fontSize:'11px',color:'#8b949e'}},t('cfg_reset_all_hint'))
     ),
     btn({class:'btn-outline',style:{color:'#f85149',borderColor:'#f8514944',flexShrink:'0'},onClick:()=>{
-      const lang=state.lang||'en';
-      const msg=lang==='de'
-        ?'⚠️ Wirklich ALLE Daten löschen?\n\nAlle Rennen, Gegner, Einstellungen und Konfiguration werden gelöscht.\nDas kann NICHT rückgängig gemacht werden!'
-        :lang==='es'
+      const lang=state.lang||'es';
+      const msg=lang==='es'
         ?'⚠️ ¿Realmente eliminar TODOS los datos?\n\nTodas las carreras, rivales, ajustes y configuración serán eliminados.\n¡Esto NO se puede deshacer!'
         :'⚠️ Really delete ALL data?\n\nAll races, opponents, settings and configuration will be deleted.\nThis CANNOT be undone!';
       if(!confirm(msg)) return;
@@ -4671,51 +4739,44 @@ function renderDriverPickerModal(drivers, jsonText, meta){
 // ── DOCS TAB ──
 function renderDocs(){
   const wrap=div({style:{padding:'20px',display:'flex',flexDirection:'column',gap:'20px'}});
-  const lang=state.lang||'en';
-  const de=lang==='de';
+  const lang=state.lang||'es';
+  const es=lang==='es';
 
-  // ── Hero ──
   const hero=div({style:{background:'linear-gradient(135deg,#161b22 0%,#0d1117 100%)',border:'1px solid #30363d',borderRadius:'14px',padding:'28px 32px'}});
   hero.innerHTML=`
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
       <span style="font-size:36px">📖</span>
       <div>
-        <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:1px">${de?'Dokumentation':'Documentation'}</div>
+        <div style="font-size:22px;font-weight:900;color:#fff;letter-spacing:1px">${es?'Documentación':'Documentation'}</div>
         <div style="font-size:12px;color:#8b949e;margin-top:3px">iRacing Career Tracker · v0.1.0-beta</div>
       </div>
     </div>
     <div style="font-size:13px;color:#8b949e;line-height:1.7;max-width:700px">
-      ${de
-        ? 'Vollständige Referenz: Erste Schritte, Datenmodell, alle Tabs & Features, Datenschutz und FAQ. Klicke auf eine Sektion um sie aufzuklappen.'
-        : 'Complete reference: Getting started, data model, all tabs & features, privacy info and FAQ. Click a section to expand it.'}
-    </div>
-  `;
+      ${es?'Referencia completa: primeros pasos, modelo de datos, pestañas y funciones, privacidad y FAQ. Haz clic en una sección para expandirla.':'Complete reference: Getting started, data model, all tabs & features, privacy info and FAQ. Click a section to expand it.'}
+    </div>`;
   wrap.appendChild(hero);
 
-  // ── Privacy Notice (prominent) ──
   const privacyBox=div({style:{background:'#161b22',border:'2px solid #f0883e66',borderRadius:'12px',padding:'20px 24px'}});
   privacyBox.innerHTML=`
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
       <span style="font-size:24px">🔐</span>
-      <div style="font-size:15px;font-weight:900;color:#f0883e;letter-spacing:1px">${de?'Datenschutz & Offline-Betrieb':'Privacy & Offline Usage'}</div>
+      <div style="font-size:15px;font-weight:900;color:#f0883e;letter-spacing:1px">${es?'Privacidad y uso offline':'Privacy & Offline Usage'}</div>
     </div>
     <div style="font-size:13px;color:#c9d1d9;line-height:1.8">
-      ${de ? `
-        <strong style="color:#fff">Was du bekommst:</strong> Eine einzelne <code style="background:#0d1117;padding:2px 6px;border-radius:4px">.html</code>-Datei — öffne sie lokal in deinem Browser. Kein Server, kein Account, kein Internet nötig.<br><br>
-        <strong style="color:#fff">Wo liegen deine Daten?</strong> Ausschließlich im <code style="background:#0d1117;padding:2px 6px;border-radius:4px">localStorage</code> deines Browsers — nie auf einem Server.<br><br>
-        <strong style="color:#3fb950">✓ Was du tun solltest:</strong> Nutze den JSON-Export regelmäßig als Backup.<br>
-        <strong style="color:#f85149">✗ Was du nie tun solltest:</strong> Die Datei (nach Dateneingabe) online hosten oder mit Anderen teilen — deine Renndaten würden dann öffentlich sichtbar sein.
+      ${es ? `
+        <strong style="color:#fff">Lo que obtienes:</strong> Un único archivo <code style="background:#0d1117;padding:2px 6px;border-radius:4px">.html</code> — ábrelo localmente en tu navegador. Sin servidor, sin cuenta, sin internet.<br><br>
+        <strong style="color:#fff">¿Dónde están tus datos?</strong> Exclusivamente en el <code style="background:#0d1117;padding:2px 6px;border-radius:4px">localStorage</code> de tu navegador — nunca en un servidor.<br><br>
+        <strong style="color:#3fb950">✓ Recomendado:</strong> Usa la exportación JSON regularmente como respaldo.<br>
+        <strong style="color:#f85149">✗ No recomendado:</strong> Subir el archivo online o compartirlo — tus datos serían visibles públicamente.
       ` : `
         <strong style="color:#fff">What you get:</strong> A single <code style="background:#0d1117;padding:2px 6px;border-radius:4px">.html</code> file — open it locally in your browser. No server, no account, no internet required.<br><br>
         <strong style="color:#fff">Where is your data?</strong> Stored exclusively in your browser's <code style="background:#0d1117;padding:2px 6px;border-radius:4px">localStorage</code> — never on any server.<br><br>
         <strong style="color:#3fb950">✓ Do:</strong> Use JSON export regularly as a backup.<br>
-        <strong style="color:#f85149">✗ Don't:</strong> Host the file (after entering your data) online or share it with others — your race data would then be publicly visible.
+        <strong style="color:#f85149">✗ Don't:</strong> Host the file online or share it — your race data would be publicly visible.
       `}
-    </div>
-  `;
+    </div>`;
   wrap.appendChild(privacyBox);
 
-  // ── Section builder ──
   function mkSection(icon, title, color, blocks){
     const sec=div({style:{background:'#0d1117',border:'1px solid #21262d',borderRadius:'12px',overflow:'hidden'}});
     const hdr=div({style:{padding:'14px 20px',background:'#161b22',borderBottom:'1px solid #21262d',display:'flex',alignItems:'center',gap:'10px',cursor:'pointer',userSelect:'none'}});
@@ -4726,151 +4787,116 @@ function renderDocs(){
     hdr.addEventListener('click',()=>{open=!open;body.style.display=open?'block':'none';arrow.style.transform=open?'rotate(180deg)':'';});
     sec.appendChild(hdr);sec.appendChild(body);
     blocks.forEach(b=>{
-      if(b.type==='html'){
-        const el=div({style:{padding:'18px 24px',borderBottom:'1px solid #21262d',fontSize:'13px',color:'#8b949e',lineHeight:'1.75'}});
-        el.innerHTML=b.content;body.appendChild(el);
-      } else if(b.type==='grid'){
-        const grid=div({style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:'1px',background:'#21262d',borderBottom:'1px solid #21262d'}});
-        b.cells.forEach(([head,val,col])=>{
-          const cell=div({style:{background:'#0d1117',padding:'14px 18px'}});
-          cell.innerHTML=`<div style="font-size:10px;color:${col||'#8b949e'};letter-spacing:1px;font-weight:700;text-transform:uppercase;margin-bottom:5px">${head}</div><div style="font-size:13px;color:#c9d1d9;line-height:1.6">${val}</div>`;
-          grid.appendChild(cell);
-        });body.appendChild(grid);
-      } else if(b.type==='table'){
-        const wrapper=div({style:{padding:'0 0 1px 0',borderBottom:'1px solid #21262d',overflowX:'auto'}});
-        const tbl=document.createElement('table');
-        tbl.style.cssText="width:100%;border-collapse:collapse;font-size:12px;font-family:'Courier New',monospace";
-        const thead=document.createElement('thead');const hr=document.createElement('tr');
-        b.cols.forEach(c=>{const th=document.createElement('th');th.style.cssText='padding:10px 16px;text-align:left;color:#8b949e;letter-spacing:1px;font-size:10px;text-transform:uppercase;border-bottom:1px solid #21262d;white-space:nowrap;background:#0d1117';th.textContent=c;hr.appendChild(th);});
-        thead.appendChild(hr);tbl.appendChild(thead);
-        const tbody=document.createElement('tbody');
-        b.rows.forEach((row,ri)=>{const tr=document.createElement('tr');tr.style.background=ri%2===0?'#0d1117':'#0a0c10';row.forEach(cell=>{const td=document.createElement('td');td.style.cssText='padding:9px 16px;color:#c9d1d9;border-bottom:1px solid #21262d22;vertical-align:top';if(typeof cell==='string'&&cell.startsWith('<'))td.innerHTML=cell;else td.textContent=cell;tr.appendChild(td);});tbody.appendChild(tr);});
-        tbl.appendChild(tbody);wrapper.appendChild(tbl);body.appendChild(wrapper);
-      } else if(b.type==='faq'){
-        b.items.forEach((item,i)=>{
-          const entry=div({style:{borderBottom:i<b.items.length-1?'1px solid #21262d':'none'}});
-          const isOpen={v:false};
-          const qRow=div({style:{padding:'13px 20px',cursor:'pointer',display:'flex',justifyContent:'space-between',alignItems:'center',gap:'12px'}});
-          const qText=div({style:{fontSize:'13px',color:'#c9d1d9',fontWeight:'700'}});qText.innerHTML=item.q;
-          const qarr=div({style:{color:'#8b949e',fontSize:'11px',flexShrink:'0',transition:'transform .2s'}},'▼');
-          qRow.appendChild(qText);qRow.appendChild(qarr);
-          const aRow=div({style:{padding:'0 20px 13px',display:'none',fontSize:'13px',color:'#8b949e',lineHeight:'1.7'}});aRow.innerHTML=item.a;
-          qRow.addEventListener('click',()=>{isOpen.v=!isOpen.v;aRow.style.display=isOpen.v?'block':'none';qarr.style.transform=isOpen.v?'rotate(180deg)':'';});
-          entry.appendChild(qRow);entry.appendChild(aRow);body.appendChild(entry);
-        });
-      }
+      if(b.type==='html'){const el=div({style:{padding:'18px 24px',borderBottom:'1px solid #21262d',fontSize:'13px',color:'#8b949e',lineHeight:'1.75'}});el.innerHTML=b.content;body.appendChild(el);}
+      else if(b.type==='grid'){const grid=div({style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))',gap:'1px',background:'#21262d',borderBottom:'1px solid #21262d'}});b.cells.forEach(([head,val,col])=>{const cell=div({style:{background:'#0d1117',padding:'14px 18px'}});cell.innerHTML=`<div style="font-size:10px;color:${col||'#8b949e'};letter-spacing:1px;font-weight:700;text-transform:uppercase;margin-bottom:5px">${head}</div><div style="font-size:13px;color:#c9d1d9;line-height:1.6">${val}</div>`;grid.appendChild(cell);});body.appendChild(grid);}
+      else if(b.type==='table'){const wrapper=div({style:{padding:'0 0 1px 0',borderBottom:'1px solid #21262d',overflowX:'auto'}});const tbl=document.createElement('table');tbl.style.cssText="width:100%;border-collapse:collapse;font-size:12px;font-family:'Courier New',monospace";const thead=document.createElement('thead');const hr=document.createElement('tr');b.cols.forEach(c=>{const th=document.createElement('th');th.style.cssText='padding:10px 16px;text-align:left;color:#8b949e;letter-spacing:1px;font-size:10px;text-transform:uppercase;border-bottom:1px solid #21262d;white-space:nowrap;background:#0d1117';th.textContent=c;hr.appendChild(th);});thead.appendChild(hr);tbl.appendChild(thead);const tbody=document.createElement('tbody');b.rows.forEach((row,ri)=>{const tr=document.createElement('tr');tr.style.background=ri%2===0?'#0d1117':'#0a0c10';row.forEach(cell=>{const td=document.createElement('td');td.style.cssText='padding:9px 16px;color:#c9d1d9;border-bottom:1px solid #21262d22;vertical-align:top';if(typeof cell==='string'&&cell.startsWith('<'))td.innerHTML=cell;else td.textContent=cell;tr.appendChild(td);});tbody.appendChild(tr);});tbl.appendChild(tbody);wrapper.appendChild(tbl);body.appendChild(wrapper);}
+      else if(b.type==='faq'){b.items.forEach((item,i)=>{const entry=div({style:{borderBottom:i<b.items.length-1?'1px solid #21262d':'none'}});const isOpen={v:false};const qRow=div({style:{padding:'13px 20px',cursor:'pointer',display:'flex',justifyContent:'space-between',alignItems:'center',gap:'12px'}});const qText=div({style:{fontSize:'13px',color:'#c9d1d9',fontWeight:'700'}});qText.innerHTML=item.q;const qarr=div({style:{color:'#8b949e',fontSize:'11px',flexShrink:'0',transition:'transform .2s'}},'▼');qRow.appendChild(qText);qRow.appendChild(qarr);const aRow=div({style:{padding:'0 20px 13px',display:'none',fontSize:'13px',color:'#8b949e',lineHeight:'1.7'}});aRow.innerHTML=item.a;qRow.addEventListener('click',()=>{isOpen.v=!isOpen.v;aRow.style.display=isOpen.v?'block':'none';qarr.style.transform=isOpen.v?'rotate(180deg)':'';});entry.appendChild(qRow);entry.appendChild(aRow);body.appendChild(entry);});}
     });
     return sec;
   }
 
-  // ── Quick Start ──
-  wrap.appendChild(mkSection('🚀', de?'Schnellstart':'Quick Start','#58a6ff',[
-    {type:'html', content: de ? `
+  wrap.appendChild(mkSection('🚀', es?'Inicio rápido':'Quick Start','#58a6ff',[
+    {type:'html', content: es? `
       <ol style="padding-left:20px;line-height:2.2">
-        <li><strong style="color:#c9d1d9">Demo-Daten laden</strong> — klicke im Rennen-Tab auf <em>🎮 Demo-Daten laden</em>, um die App sofort zu erleben.</li>
-        <li><strong style="color:#c9d1d9">Erstes Rennen importieren</strong> — lade deine iRacing JSON-Ergebnisdatei (Session Result) über den 📂 Import-Button im Rennen-Tab.</li>
-        <li><strong style="color:#c9d1d9">Manuell eintragen</strong> — nutze <em>+Rennen</em> um Rennen ohne JSON-Datei einzutragen.</li>
-        <li><strong style="color:#c9d1d9">Backup erstellen</strong> — exportiere regelmäßig via JSON-Export (Feature kommt in v0.2).</li>
+        <li><strong style="color:#c9d1d9">Cargar datos demo</strong> — haz clic en <em>🎮 Cargar datos demo</em> en la pestaña Carreras para explorar la app.</li>
+        <li><strong style="color:#c9d1d9">Importar tu primera carrera</strong> — carga tu archivo JSON de iRacing con el botón 📂 en la pestaña Carreras.</li>
+        <li><strong style="color:#c9d1d9">Agregar manualmente</strong> — usa <em>+Carrera</em> para ingresar carreras sin archivo JSON.</li>
+        <li><strong style="color:#c9d1d9">Hacer respaldo</strong> — exporta regularmente vía exportación JSON.</li>
       </ol>
     ` : `
       <ol style="padding-left:20px;line-height:2.2">
-        <li><strong style="color:#c9d1d9">Load demo data</strong> — click <em>🎮 Load demo data</em> in the Races tab to explore the app immediately.</li>
-        <li><strong style="color:#c9d1d9">Import your first race</strong> — load your iRacing JSON result file (Session Result) via the 📂 Import button in the Races tab.</li>
+        <li><strong style="color:#c9d1d9">Load demo data</strong> — click <em>🎮 Load demo data</em> in the Races tab to explore the app.</li>
+        <li><strong style="color:#c9d1d9">Import your first race</strong> — load your iRacing JSON result file via the 📂 Import button in the Races tab.</li>
         <li><strong style="color:#c9d1d9">Add manually</strong> — use <em>+Race</em> to enter races without a JSON file.</li>
-        <li><strong style="color:#c9d1d9">Back up regularly</strong> — export via JSON export (feature coming in v0.2).</li>
+        <li><strong style="color:#c9d1d9">Back up regularly</strong> — export via JSON export.</li>
       </ol>
     `}
   ]));
 
-  // ── Data model ──
-  wrap.appendChild(mkSection('📋', de?'Datenmodell (Rennen)':'Data Model (Race)','#e3b341',[
-    {type:'table', cols:['Field','Type',de?'Beschreibung':'Description',de?'Beispiel':'Example'],
+  wrap.appendChild(mkSection('📋', es?'Modelo de datos':'Data Model','#e3b341',[
+    {type:'table', cols:[es?'Campo':'Field',es?'Tipo':'Type',es?'Descripción':'Description',es?'Ejemplo':'Example'],
      rows:[
-      ['id','string','Unique race ID','j12345678'],
-      ['date','string','ISO date + time (optional)','2025-04-02T20:15'],
-      ['track','string',de?'Streckenname':'Track name','Brands Hatch GP Circuit'],
-      ['car','string',de?'Fahrzeugname':'Car name','Porsche 911 GT3 Cup'],
+      ['id','string',es?'ID única de carrera':'Unique race ID','j12345678'],
+      ['date','string',es?'Fecha ISO + hora':'ISO date + time','2025-04-02T20:15'],
+      ['track','string',es?'Nombre de pista':'Track name','Brands Hatch GP Circuit'],
+      ['car','string',es?'Nombre del auto':'Car name','Porsche 911 GT3 Cup'],
       ['category','string','road | formula | oval | dirt_road | dirt_oval','road'],
-      ['pos','number',de?'Zielposition':'Finish position','3'],
-      ['startPos','number',de?'Startposition':'Start position','7'],
+      ['pos','number',es?'Posición final':'Finish position','3'],
+      ['startPos','number',es?'Posición de salida':'Start position','7'],
       ['sof','number','Strength of Field','2034'],
-      ['iRatingBefore','number','iR '+de?'vorher':'before','2156'],
-      ['iRatingAfter','number','iR '+de?'nachher':'after','2201'],
-      ['srBefore','number',de?'Safety Rating vorher (optional)':'Safety Rating before (optional)','3.82'],
-      ['srAfter','number',de?'Safety Rating nachher (optional)':'Safety Rating after (optional)','3.92'],
-      ['inc','number',de?'Incident-Punkte':'Incident points','2'],
-      ['fastestLap','string',de?'Schnellste Runde (optional)':'Fastest lap (optional)','1:44.556'],
-      ['notes','string',de?'Notizen (optional)':'Notes (optional)',''],
+      ['iRatingBefore','number',es?'iR antes':'iR before','2156'],
+      ['iRatingAfter','number',es?'iR después':'iR after','2201'],
+      ['srBefore','number',es?'SR antes (opcional)':'SR before (optional)','3.82'],
+      ['srAfter','number',es?'SR después (opcional)':'SR after (optional)','3.92'],
+      ['inc','number',es?'Puntos de incidentes':'Incident points','2'],
+      ['fastestLap','string',es?'Vuelta rápida (opcional)':'Fastest lap (optional)','1:44.556'],
+      ['notes','string',es?'Notas (opcional)':'Notes (optional)',''],
       ['dnf','string|null','null | external | self','null'],
-      ['wetRace','boolean',de?'Nasses Rennen':'Wet race','false'],
-      ['seasonYear','number',de?'Saison-Jahr (optional)':'Season year (optional)','2025'],
-      ['seasonQuarter','number',de?'Saison-Quartal (optional)':'Season quarter (optional)','2'],
-     ]
-    }
+      ['wetRace','boolean',es?'Carrera mojada':'Wet race','false'],
+      ['seasonYear','number',es?'Año temporada (opc.)':'Season year (opt.)','2025'],
+      ['seasonQuarter','number',es?'Trimestre (opc.)':'Quarter (opt.)','2'],
+     ]}
   ]));
 
-  // ── Tabs ──
-  wrap.appendChild(mkSection('📱', de?'Tabs & Features':'Tabs & Features','#3fb950',[
+  wrap.appendChild(mkSection('📱', es?'Pestañas y funciones':'Tabs & Features','#3fb950',[
     {type:'grid', cells:[
-      ['📈 '+(de?'Stats':'Stats'),de?'iRating- und SR-Verlauf, Strecken-Übersicht, Incidents-Chart, FL-Gap-Analyse. Aufklappbar pro Kategorie.':'iRating and SR history, track overview, incidents chart, FL-gap analysis. Collapsible per category.','#58a6ff'],
-      ['🏎️ '+(de?'Rennen':'Races'),de?'Alle Rennen, filterbar nach Kategorie und Season. JSON-Import, manuelles Eintragen. Leer-State mit Demo-Daten.':'All races, filterable by category and season. JSON import, manual entry. Empty state with demo data.','#3fb950'],
-      ['🌐 '+(de?'Gegner':'Opponents'),de?'Automatisch aus JSON-Importen aufgebaut. Nemesis-Panel, Stammgegner, Tags pro Fahrer.':'Built automatically from JSON imports. Nemesis panel, regulars, tags per driver.','#f0883e'],
-      ['📊 '+(de?'Zeitanalyse':'Time Analysis'),de?'Wann fährst du am besten? Wochentag- und Uhrzeit-Analyse.':'When do you perform best? Weekday and time-of-day analysis.','#a371f7'],
-      ['📊 '+(de?'Statistiken':'Statistics'),de?'Strecken-Performance, iR-Prognose, Bestzeiten, Lernkurve, Meta-Analyse, Season-Übersicht.':'Track performance, iR forecast, best laps, learning curve, meta analysis, season overview.','#58a6ff'],
-      ['📖 '+(de?'Doku':'Docs'),de?'Diese Dokumentation. Datenmodell, Datenschutz, FAQ.':'This documentation. Data model, privacy, FAQ.','#e3b341'],
+      ['📈 Stats',es?'Historial de iRating y SR, pistas, incidentes, análisis FL-Gap. Desplegable por categoría.':'iRating and SR history, tracks, incidents, FL-gap analysis. Collapsible per category.','#58a6ff'],
+      ['🏎️ '+(es?'Carreras':'Races'),es?'Todas las carreras, filtrables por categoría y temporada. Importación JSON, ingreso manual.':'All races, filterable by category and season. JSON import, manual entry.','#3fb950'],
+      ['🌐 '+(es?'Rivales':'Opponents'),es?'Se construye automáticamente desde JSON. Panel de némesis, rivales habituales, etiquetas.':'Built automatically from JSON. Nemesis panel, regulars, tags per driver.','#f0883e'],
+      ['📊 '+(es?'Análisis temporal':'Time Analysis'),es?'¿Cuándo rindes mejor? Análisis por día y hora.':'When do you perform best? Day and time analysis.','#a371f7'],
+      ['📊 '+(es?'Estadísticas':'Statistics'),es?'Rendimiento por pista, pronóstico iR, mejores tiempos, curva de aprendizaje, temporadas.':'Track performance, iR forecast, best laps, learning curve, seasons.','#58a6ff'],
+      ['📖 Docs',es?'Esta documentación.':'This documentation.','#e3b341'],
     ]}
   ]));
 
-  // ── JSON Import ──
-  wrap.appendChild(mkSection('📂', de?'JSON-Import':'JSON Import','#3fb950',[
-    {type:'html', content: de ? `
-      <p><strong style="color:#c9d1d9">Wie du iRacing JSON-Dateien bekommst:</strong></p>
+  wrap.appendChild(mkSection('📂', es?'Importación JSON':'JSON Import','#3fb950',[
+    {type:'html', content: es? `
+      <p><strong style="color:#c9d1d9">Cómo obtener archivos JSON de iRacing:</strong></p>
       <ol style="padding-left:20px;line-height:2">
-        <li>Nach dem Rennen: <strong>my.iracing.com → Race Results</strong></li>
-        <li>Rennen auswählen → <strong>"Export Results" → JSON</strong></li>
-        <li>Datei im Rennen-Tab importieren (📂 JSON-Button)</li>
+        <li>Después de la carrera: <strong>my.iracing.com → Race Results</strong></li>
+        <li>Seleccionar carrera → <strong>"Export Results" → JSON</strong></li>
+        <li>Importar el archivo en la pestaña Carreras (botón 📂)</li>
       </ol>
-      <p style="margin-top:12px">Gegner werden automatisch aus der JSON-Datei extrahiert und in die Gegner-Datenbank eingetragen. Mehrere Dateien auf einmal möglich (Batch-Import).</p>
+      <p style="margin-top:12px">Los rivales se extraen automáticamente del JSON y se agregan a la base de datos. Se pueden importar múltiples archivos a la vez (importación masiva).</p>
     ` : `
       <p><strong style="color:#c9d1d9">How to get iRacing JSON files:</strong></p>
       <ol style="padding-left:20px;line-height:2">
         <li>After a race: <strong>my.iracing.com → Race Results</strong></li>
         <li>Select race → <strong>"Export Results" → JSON</strong></li>
-        <li>Import the file in the Races tab (📂 JSON button)</li>
+        <li>Import the file in the Races tab (📂 button)</li>
       </ol>
-      <p style="margin-top:12px">Opponents are automatically extracted from the JSON file and added to the opponent database. Multiple files at once are supported (batch import).</p>
+      <p style="margin-top:12px">Opponents are automatically extracted from the JSON and added to the database. Multiple files at once are supported (batch import).</p>
     `}
   ]));
 
-  // ── FAQ ──
   wrap.appendChild(mkSection('❓', 'FAQ','#8b949e',[
-    {type:'faq', items: de ? [
-      {q:'Werden meine Daten irgendwo gespeichert oder hochgeladen?',a:'Nein. Alle Daten liegen ausschließlich in deinem Browser-localStorage. Kein Server, keine Cloud, keine Datenübertragung.'},
-      {q:'Was passiert wenn ich den Browser-Cache lösche?',a:'Deine localStorage-Daten gehen verloren. Exportiere regelmäßig als JSON-Backup, bevor du den Cache leerst oder die App deinstallierst.'},
-      {q:'Funktioniert die App offline?',a:'Ja — vollständig offline. Die HTML-Datei enthält alles was sie braucht.'},
-      {q:'Kann ich die App auf mehreren Geräten nutzen?',a:'Ja, aber die Daten werden nicht synchronisiert. Exportiere auf Gerät A und importiere auf Gerät B.'},
-      {q:'Wie importiere ich Rennen ohne JSON-Datei?',a:'Klicke im Rennen-Tab auf "+Rennen" und fülle das Formular manuell aus. Gegner werden dabei nicht automatisch erfasst.'},
-      {q:'Warum sind meine Gegner leer?',a:'Die Gegner-DB wird nur aus JSON-Importen aufgebaut. Manuell eingetragene Rennen erzeugen keine Gegner-Einträge.'},
-      {q:'Was bedeutet die "3T" / "3d" Badge bei Gegnern?',a:'Dieser Fahrer wurde in den letzten 3 Tagen in einem importierten Rennen gesehen.'},
-      {q:'iR-Verlauf zeigt komische Sprünge?',a:'Meist fehlerhafte iRatingBefore/After-Werte in einem Rennen. Rennen öffnen (Klick) → Bearbeiten → Werte korrigieren.'},
+    {type:'faq', items: es? [
+      {q:'¿Mis datos se suben a algún lugar?',a:'No. Todo se guarda en el localStorage de tu navegador. Sin servidor, sin nube.'},
+      {q:'¿Qué pasa si borro el caché del navegador?',a:'Tus datos se perderán. Exporta regularmente como respaldo JSON.'},
+      {q:'¿Funciona offline?',a:'Sí — completamente offline. El archivo HTML contiene todo lo necesario.'},
+      {q:'¿Puedo usarla en varios dispositivos?',a:'Sí, pero los datos no se sincronizan. Exporta en uno e importa en otro.'},
+      {q:'¿Cómo importo carreras sin archivo JSON?',a:'Haz clic en "+Carrera" y completa el formulario. Los rivales no se capturan automáticamente así.'},
+      {q:'¿Por qué mi lista de rivales está vacía?',a:'La base de rivales solo se construye desde importaciones JSON. Las carreras manuales no generan rivales.'},
+      {q:'¿Qué significa la insignia "3d" en rivales?',a:'Ese piloto fue visto en una carrera importada en los últimos 3 días.'},
+      {q:'¿El historial de iR muestra saltos extraños?',a:'Generalmente son valores incorrectos de iR. Haz clic en la carrera → Editar → corrige los valores.'},
     ] : [
-      {q:'Is my data uploaded or stored anywhere?',a:'No. All data lives exclusively in your browser\'s localStorage. No server, no cloud, no data transfer.'},
-      {q:'What happens if I clear the browser cache?',a:'Your localStorage data will be lost. Export regularly as a JSON backup before clearing cache or uninstalling the app.'},
-      {q:'Does the app work offline?',a:'Yes — fully offline. The HTML file contains everything it needs.'},
-      {q:'Can I use the app on multiple devices?',a:'Yes, but data is not synced. Export on device A and import on device B.'},
-      {q:'How do I import races without a JSON file?',a:'Click "+Race" in the Races tab and fill in the form manually. Opponents are not captured automatically this way.'},
-      {q:'Why is my opponent list empty?',a:'The opponent DB is only built from JSON imports. Manually entered races don\'t generate opponent entries.'},
-      {q:'What does the "3d" badge on opponents mean?',a:'This driver was seen in an imported race within the last 3 days.'},
-      {q:'iR history shows weird jumps?',a:'Usually incorrect iRatingBefore/After values in a race. Click the race → Edit → correct the values.'},
+      {q:'Is my data uploaded anywhere?',a:'No. All data lives in your browser\'s localStorage. No server, no cloud.'},
+      {q:'What if I clear the browser cache?',a:'Your data will be lost. Export regularly as a JSON backup.'},
+      {q:'Does it work offline?',a:'Yes — fully offline. The HTML file contains everything it needs.'},
+      {q:'Can I use it on multiple devices?',a:'Yes, but data is not synced. Export on one and import on another.'},
+      {q:'How do I add races without JSON?',a:'Click "+Race" and fill the form. Opponents are not captured this way.'},
+      {q:'Why is my opponent list empty?',a:'Opponents are only built from JSON imports. Manual races don\'t generate entries.'},
+      {q:'What does the "3d" badge mean?',a:'That driver was seen in an imported race within the last 3 days.'},
+      {q:'iR history shows weird jumps?',a:'Usually incorrect iR values. Click the race → Edit → correct the values.'},
     ]}
   ]));
 
-  // ── Footer ──
   const foot=div({style:{textAlign:'center',padding:'20px',fontSize:'12px',color:'#484f58',borderTop:'1px solid #21262d',marginTop:'8px'}});
-  foot.innerHTML='iRacing Career Tracker · v0.1.0-beta &nbsp;·&nbsp; <span style="color:#3fb950">'+de?'Daten in localStorage':'Data in localStorage'+'</span> &nbsp;·&nbsp; <a href="https://github.com" style="color:#58a6ff;text-decoration:none">GitHub</a>';
+  foot.innerHTML='iRacing Career Tracker · v0.1.0-beta &nbsp;·&nbsp; <span style="color:#3fb950">'+(es?'Datos en localStorage':'Data in localStorage')+'</span>';
   wrap.appendChild(foot);
   return wrap;
 }
+
 
 // ── FIXED CAT SIDEBAR ──
 function renderFixedCatSidebar(races){
